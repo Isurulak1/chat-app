@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { arrayUnion, collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import { AppContext } from "../../context/AppContext";
+import { toast } from "react-toastify";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
-  const { userData,chatData} = useContext(AppContext);
+  const { userData,chatData, chatUser, setChatUser,setMessagesId,messagesId} = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
 
@@ -71,11 +72,16 @@ const LeftSidebar = () => {
           messageSeen: true
         })
       })
-    }catch{
-
+    }catch(error){
+      toast.error(error.message);
+      console.error(error);
     }
   }
 
+  const setChat = async (item) => {
+    setMessagesId(item.messageId);
+    setChatUser(item)
+  }
   return (
     <div className="ls">
       <div className="ls-top">
@@ -107,7 +113,7 @@ const LeftSidebar = () => {
           </div>
           : 
           chatData.map((item, index) => (
-            <div key={index} className="friends">
+            <div onClick={()=>setChat(item)} key={index} className="friends">
               <img src={item.userData.avatar} alt="" />
               <div>
                 <p>{item.userData.name}</p>

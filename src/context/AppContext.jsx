@@ -3,6 +3,7 @@ import { createContext, useEffect, useState } from "react";
 import { auth, db } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
 
+
 export const AppContext = createContext();
 
 const AppContextProvider =(props) =>{
@@ -10,6 +11,9 @@ const AppContextProvider =(props) =>{
     const navigate = useNavigate();
     const [userData,setUserData] = useState(null);
     const [chatData,setChatData] = useState(null);
+    const [messagesId,setMessagesId] = useState(null);
+    const [massages,setMassages] = useState([]);
+    const [chatUser,setChatUser] = useState(null);
 
     const loadUserData = async (uid) => {
         try{
@@ -61,7 +65,10 @@ const AppContextProvider =(props) =>{
     const value = {
         userData,setUserData,
         chatData,setChatData,
-        loadUserData
+        loadUserData,
+        massages,setMassages,
+        messagesId,setMessagesId,
+        chatUser,setChatUser
     }
     return (
         <AppContext.Provider value={value}>
