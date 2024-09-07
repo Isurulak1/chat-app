@@ -6,6 +6,7 @@ import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firesto
 import { db } from '../../config/firebase';
 import { toast } from 'react-toastify'
 import upload from '../../lib/upload'
+import { useState } from 'react';
 
 const ChatBox = () => {
 

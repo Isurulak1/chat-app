@@ -44,9 +44,18 @@ const AppContextProvider =(props) =>{
 
     useEffect(()=>{
         if(userData){
-            const chatRef = doc(db,'chat',userData.id);
+            const chatRef = doc(db,"chats",userData.id);
             const unSub = onSnapshot(chatRef,async (res) => {
+                if (!res.exists()) {
+                    console.error(`Chat document does not exist for userId: ${userData.id}`);
+                    return; // Exit if the document doesn't exist
+                }
+    
                 const chatItems = res.data().chatsData;
+                if (!chatItems) {
+                    console.error(`No chatsData field found in document for userId: ${userData.id}`);
+                    return;
+                }
                 const tempData = [];
                 for(const item of chatItems){
                     const userRef = doc(db,'users',item.rId);
