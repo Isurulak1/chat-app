@@ -13,6 +13,7 @@ const LeftSidebar = () => {
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
 
+
   const inputHandler = async (e) => {
     try {
       const input = e.target.value;
