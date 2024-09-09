@@ -12,6 +12,9 @@ const ChatBox = () => {
 
   const {userData,messagesId,chatUser,messages,setMessages} = useContext(AppContext);
 
+console.log({ userData, messagesId, chatUser, messages, setMessages });
+
+
   const [input,setInput] = useState('');
 
   const sendMessage = async () => {
@@ -21,7 +24,7 @@ const ChatBox = () => {
           messages: arrayUnion({
             sId: userData.id,
             text: input,
-            createdAt:new Data()
+            createdAt:new Date()
           })
       })
 
@@ -35,7 +38,7 @@ const ChatBox = () => {
           const userChatData = userChatsSnapshot.data();
           const chatIndex = userChatData.chatsData.findIndex((c)=>c.massageId === messagesId);
           userChatData.chatsData[chatIndex].lastMessage = input.slice(0,30);
-          userChatData.chatsData[chatIndex].updatedAt = Data.now();
+          userChatData.chatsData[chatIndex].updatedAt = Date.now();
           if(userChatData.chatsData[chatIndex].rId === userData.id){
             userChatData.chatsData[chatIndex].messageSeen = false;
           }
@@ -60,7 +63,7 @@ const ChatBox = () => {
           messages: arrayUnion({
             sId: userData.id,
             image: fileUrl,
-            createdAt:new Data()
+            createdAt:new Date()
           })
       })
       const userIDs = [chatUser.rId,userData.id];
@@ -73,7 +76,7 @@ const ChatBox = () => {
           const userChatData = userChatsSnapshot.data();
           const chatIndex = userChatData.chatsData.findIndex((c)=>c.massageId === messagesId);
           userChatData.chatsData[chatIndex].lastMessage = "Image";
-          userChatData.chatsData[chatIndex].updatedAt = Data.now();
+          userChatData.chatsData[chatIndex].updatedAt = Date.now();
           if(userChatData.chatsData[chatIndex].rId === userData.id){
             userChatData.chatsData[chatIndex].messageSeen = false;
           }
@@ -102,11 +105,11 @@ const ChatBox = () => {
     }
   }
   useEffect(()=>{
-   if(messagesId){
-    const unSub = onSnapshot(doc(db,'messages',messagesId),(res)=>{
-      setMessages(res.data().messages.reverse())
-      
-    })
+    if (messagesId) {
+      const unSub = onSnapshot(doc(db, 'messages', messagesId), (res) => {
+        const messagesData = res.data()?.messages || []; // Set a default empty array if messages is undefined
+        setMessages(messagesData.reverse());
+    });
     return () => {
       unSub();
     }
@@ -122,13 +125,13 @@ const ChatBox = () => {
         <img src={assets.help_icon} className='help' alt="" />
       </div>
       <div className="chat-msg">
-
-        {messages.map((msg,index)=>(
-          <div key={index} className={msg.sId === userData.id ? "s-msg" : "r-msg"}>
-            {msg["image"]
-            ? <img className='msg-img' src={msg.image} alt="" />
-            :<p className="msg">{msg.text}</p>
-            }
+      {messages && messages.map((msg, index) => (
+          <div key={index} className={msg.sId === userData.id ? 's-msg' : 'r-msg'}>
+            {msg.image ? (
+              <img className='msg-img' src={msg.image} alt='' />
+            ) : (
+              <p className='msg'>{msg.text}</p>
+            )}
           <div>
             <img src={msg.sId === userData.id ? userData.avatar : chatUser.userData.avatar} alt="" />
             <p>{convertTimestamp(msg.createdAt)}</p>
