@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 
 export const AppContext = createContext();
 
-const AppContextProvider =(props) =>{
+export const AppContextProvider =(props) =>{
     
     const navigate = useNavigate();
     const [userData,setUserData] = useState(null);
     const [chatData,setChatData] = useState(null);
     const [messagesId,setMessagesId] = useState(null);
-    const [massages,setMassages] = useState([]);
+    const [messages,setMessages] = useState([]);
     const [chatUser,setChatUser] = useState(null);
 
     const loadUserData = async (uid) => {
@@ -75,7 +75,7 @@ const AppContextProvider =(props) =>{
         userData,setUserData,
         chatData,setChatData,
         loadUserData,
-        massages,setMassages,
+        messages,setMessages,
         messagesId,setMessagesId,
         chatUser,setChatUser
     }

@@ -12,7 +12,6 @@ const ChatBox = () => {
 
   const {userData,messagesId,chatUser,messages,setMessages} = useContext(AppContext);
 
-console.log({ userData, messagesId, chatUser, messages, setMessages });
 
 
   const [input,setInput] = useState('');
@@ -36,7 +35,7 @@ console.log({ userData, messagesId, chatUser, messages, setMessages });
 
         if(userChatsSnapshot.exists()){
           const userChatData = userChatsSnapshot.data();
-          const chatIndex = userChatData.chatsData.findIndex((c)=>c.massageId === messagesId);
+          const chatIndex = userChatData.chatsData.findIndex((c)=>c.messageId === messagesId);
           userChatData.chatsData[chatIndex].lastMessage = input.slice(0,30);
           userChatData.chatsData[chatIndex].updatedAt = Date.now();
           if(userChatData.chatsData[chatIndex].rId === userData.id){
@@ -74,7 +73,7 @@ console.log({ userData, messagesId, chatUser, messages, setMessages });
 
         if(userChatsSnapshot.exists()){
           const userChatData = userChatsSnapshot.data();
-          const chatIndex = userChatData.chatsData.findIndex((c)=>c.massageId === messagesId);
+          const chatIndex = userChatData.chatsData.findIndex((c)=>c.messageId === messagesId);
           userChatData.chatsData[chatIndex].lastMessage = "Image";
           userChatData.chatsData[chatIndex].updatedAt = Date.now();
           if(userChatData.chatsData[chatIndex].rId === userData.id){
@@ -95,7 +94,7 @@ console.log({ userData, messagesId, chatUser, messages, setMessages });
 
   const convertTimestamp = (timestamp) => {
     let date = timestamp.toDate();
-    const hour = date.getHouurs();
+    const hour = date.getHours();
     const minute = date.getMinutes();
     if(hour > 12){
       return hour-12 + ":" + minute + " PM";
@@ -107,14 +106,14 @@ console.log({ userData, messagesId, chatUser, messages, setMessages });
   useEffect(()=>{
     if (messagesId) {
       const unSub = onSnapshot(doc(db, 'messages', messagesId), (res) => {
-        const messagesData = res.data()?.messages || []; // Set a default empty array if messages is undefined
-        setMessages(messagesData.reverse());
+        setMessages(res.data().messages.reverse())
+      
     });
     return () => {
       unSub();
     }
    } 
-  },[messagesId])
+  },[messagesId, setMessages])
   
 
   return chatUser ? (
@@ -125,13 +124,12 @@ console.log({ userData, messagesId, chatUser, messages, setMessages });
         <img src={assets.help_icon} className='help' alt="" />
       </div>
       <div className="chat-msg">
-      {messages && messages.map((msg, index) => (
+      {messages.map((msg, index) => (
           <div key={index} className={msg.sId === userData.id ? 's-msg' : 'r-msg'}>
-            {msg.image ? (
-              <img className='msg-img' src={msg.image} alt='' />
-            ) : (
-              <p className='msg'>{msg.text}</p>
-            )}
+            {msg["image"]
+              ?<img className='msg-img' src={msg.image} alt='' />
+              :<p className='msg'>{msg.text}</p>
+            }
           <div>
             <img src={msg.sId === userData.id ? userData.avatar : chatUser.userData.avatar} alt="" />
             <p>{convertTimestamp(msg.createdAt)}</p>

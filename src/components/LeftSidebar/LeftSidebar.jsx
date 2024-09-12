@@ -6,6 +6,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   serverTimestamp,
@@ -94,8 +95,21 @@ const LeftSidebar = () => {
   };
 
   const setChat = async (item) => {
-    setMessagesId(item.messageId);
-    setChatUser(item);
+    try{
+        setMessagesId(item.messageId);
+        setChatUser(item);
+        const userChatsRef = doc(db,'chats',userData.id);
+        const userChatsSnapshot = await getDoc(userChatsRef);
+        const userChatsData = userChatsSnapshot.data();
+        const chatIndex = userChatsData.chatsData.findIndex((c)=>c.messageId === item.messageId);
+        userChatsData.chatsData[chatIndex].messageSeen = true;
+        await updateDoc(userChatsRef,{
+          chatsData:userChatsData.chatsData
+    })
+    }catch{
+      toast.error(error.message)
+    }
+    
   };
   return (
     <div className="ls">
@@ -133,9 +147,15 @@ const LeftSidebar = () => {
               return null; // Skip rendering if userData is missing
             }
             return (
-              <div onClick={() => setChat(item)} key={index} className="friends">
+              <div
+                onClick={() => setChat(item)}
+                key={index}
+                className={`friends ${item.messageSeen || item.messageId === messagesId ? "" : "border"}`}>
                 {/* Ensure avatar and name are defined */}
-                <img src={item.userData.avatar || assets.defaultAvatar} alt="" />
+                <img
+                  src={item.userData.avatar || assets.defaultAvatar}
+                  alt=""
+                />
                 <div>
                   <p>{item.userData.name || "Unknown User"}</p>
                   <span>{item.lastMessage || "No message"}</span>
