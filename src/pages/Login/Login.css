@@ -42,8 +42,8 @@
     color: #808080;
 }
 .login-forgot{
-    display: flex;
     gap: 5px;
+    display: inline;
 }
 .login-toggle{
     font-size: 13px;
@@ -53,4 +53,11 @@
     font-weight: 500;
     color: #077EFF;
     cursor: pointer;
+}
+@media(max-width:768px){
+    .login{
+        flex-direction: column;
+        justify-content: center;
+        gap: 30px;
+    }
 }

@@ -108,3 +108,8 @@
 .friends.border div span{
     color: turquoise;
 }
+@media (max-width:900px){
+    .ls{
+        width: 100%;
+    }
+}
